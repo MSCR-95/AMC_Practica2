@@ -7,7 +7,10 @@ import java.io.InputStreamReader;
 import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AFD implements Proceso {
 
@@ -45,14 +48,14 @@ public class AFD implements Proceso {
     }
 
     public String transicion(String estado, String simbolo) {
-        String e2 = ""; // Estado de destino ahora es un String
+        String e2 = "ERROR"; //Estado destino es "ERROR" si no existe la transición
         int t = 0;
         boolean encontrado = false;
 
         while (!encontrado && t < transiciones.size()) {
             if (transiciones.get(t).getE1().equals(estado) && transiciones.get(t).getSimbolo().equals(simbolo)) {
                 encontrado = true;
-                e2 = transiciones.get(t).getE2(); // Obtenemos el estado de destino
+                e2 = transiciones.get(t).getE2(); //Obtenemos el estado de destino
             } else {
                 t++;
             }
@@ -62,20 +65,44 @@ public class AFD implements Proceso {
     }
 
     @Override
-    public boolean esFinal(String estado) {
-        return estadosFinales.contains(estado);
+    public boolean reconocer(String cadena) {
+        String[] simbolos = cadena.split(",");
+        Set<String> estadosActuales = new HashSet<>(Collections.singletonList(inicial.trim()));
+        
+        System.out.println("Estado inicial: " + estadosActuales);
+
+        for (String simbolo : simbolos) {
+            Set<String> nuevosEstados = new HashSet<>();
+
+            for (String estadoActual : estadosActuales) {
+                String nuevoEstado = transicion(estadoActual, simbolo);
+                //System.out.println("**nuevo estado:" + nuevoEstado.trim()); // Modificado para eliminar espacios en blanco
+                if (!nuevoEstado.equals("ERROR")) {
+                    nuevosEstados.add(nuevoEstado);
+                }
+            }
+
+            estadosActuales = nuevosEstados;
+            System.out.println("Despues de la transicion con '" + simbolo + "': " + String.join("", estadosActuales));
+
+            if (estadosActuales.isEmpty()) {
+                System.out.println("La cadena no tiene transiciones correctas.");
+                return false;
+            }
+        }
+        //Verificamos si termino en algun estado final
+        if (!Collections.disjoint(estadosActuales, estadosFinales)) {
+            System.out.println("La cadena termina en uno de los estados finales: " + estadosActuales);
+            return true;
+        } else {
+            System.out.println("La cadena no termina en un estado final.");
+            return false;
+        }
     }
 
     @Override
-    public boolean reconocer(String cadena) {
-        String[] simbolos = cadena.split(",");
-        String estado = inicial;
-
-        for (String simbolo : simbolos) {
-            estado = transicion(estado, simbolo);
-        }
-
-        return esFinal(estado);
+    public boolean esFinal(String estado) {
+        return estadosFinales.contains(estado);
     }
 
     public void setInicial(String inicial) {
@@ -129,27 +156,7 @@ public class AFD implements Proceso {
                 automataAFD.añadirFinal(estado);
             }
         }
-        // AÑADIR TRANSICIONES
-        /*
-        System.out.println("Indique las transiciones (Formato: estadoOrigen simbolo estadoDestino)");
-        cadena = br.readLine();
-        System.out.println("Entrada de transiciones: " + cadena); // Agrega esta línea
-        String[] transicionesArray = cadena.trim().split("\\s+");
 
-        for (int i = 0; i < transicionesArray.length; i += 3) {
-            try {
-                String estadoOrigen = transicionesArray[i];
-                System.out.println("**parte[0]" + estadoOrigen);
-                String simbolo = transicionesArray[i + 1];
-                System.out.println("**parte[1]" + simbolo);
-                String estadoDestino = transicionesArray[i + 2];
-                System.out.println("**parte[2]" + estadoDestino);
-                automataAFD.agregarTransicion(estadoOrigen, simbolo, estadoDestino);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Error: La transicion no tiene el formato correcto.");
-            }
-        }
-         */
         // AÑADIR TRANSICIONES
         System.out.println("Indica la cantidad de transiciones que deseas añadir:");
         int cantidadTransiciones = Integer.parseInt(br.readLine());

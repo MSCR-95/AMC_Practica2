@@ -37,6 +37,7 @@ public class GestionFicheros {
                             automataAFD.añadirFinal(estado);
                         }
                     }
+                    
                 } else if (linea.startsWith("TRANSICIONES:")) {
                     while ((linea = br.readLine()) != null && !linea.equals("FIN")) {
                         String[] partes = linea.split("\\s+");
@@ -48,7 +49,9 @@ public class GestionFicheros {
                         }
                     }
                 }
+                
             }
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
