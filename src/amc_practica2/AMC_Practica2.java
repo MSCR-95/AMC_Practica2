@@ -14,10 +14,16 @@ public class AMC_Practica2 {
      */
     public static void main(String[] args) throws IOException {
         
-       
-        
-        AFD automataAFD = new AFD();
-        automataAFD.pedir();
+        GestionFicheros gf = new GestionFicheros();
+        AFD aut = gf.cargarAutomataAFD("src/amc_practica2/ficherosPruebas/automataAFD1.txt");
+        System.out.println(aut);
+
+        if(aut.reconocer("0,1,1,0")){
+            System.out.println("Pertenece al automata");
+        }else
+            System.out.println("NO pertenece");
+
+        //System.out.println(aut);  
         
     }
     

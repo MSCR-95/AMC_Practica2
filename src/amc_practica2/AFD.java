@@ -6,15 +6,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.Buffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AFD implements Proceso {
 
-    private List<Integer> estadosFinales; //DECISIONES: cambiamos int [] a List
+    private List<String> estadosFinales;
     private List<TransicionAFD> transiciones;
-
-    private List<Integer> estados;
-    private int inicial = 0;
+    private List<String> estados;
+    private String inicial = ""; // Estado inicial ahora es un String
 
     public AFD() {
         estadosFinales = new ArrayList<>();
@@ -22,93 +22,76 @@ public class AFD implements Proceso {
         estados = new ArrayList<>();
     }
 
-    public void agregarTransicion(int e1, String simbolo, int e2) {
+    public List<String> getEstadosFinales() {
+        return estadosFinales;
+    }
 
+    public List<TransicionAFD> getTransiciones() {
+        return transiciones;
+    }
+
+    public List<String> getEstados() {
+        return estados;
+    }
+
+    public void agregarTransicion(String e1, String simbolo, String e2) {
         if (estados.contains(e1) && estados.contains(e2)) {
             TransicionAFD e = new TransicionAFD(e1, simbolo, e2);
             transiciones.add(e);
-            System.out.println("transicion añadida con exito");
+            //System.out.println("Transicion añadida con exito");
         } else {
-            System.out.println("No se ha agregado la transicion");
+            System.out.println("Los estados no pertenecen a la lista de estados");
         }
-
     }
 
-    /**
-     * Dado un estado y un simbolo,devuelve el estado de destino de la
-     * transicion o -1n si no existe la transicion
-     *
-     * @param estado
-     * @param simbolo
-     * @return
-     */
-    public int transicion(int estado, String simbolo) {
-        int e2 = -1; //Estado de destino
+    public String transicion(String estado, String simbolo) {
+        String e2 = ""; // Estado de destino ahora es un String
         int t = 0;
         boolean encontrado = false;
 
         while (!encontrado && t < transiciones.size()) {
-            if (transiciones.get(t).getE1() == estado && transiciones.get(t).getSimbolo().equals(simbolo)) {
+            if (transiciones.get(t).getE1().equals(estado) && transiciones.get(t).getSimbolo().equals(simbolo)) {
                 encontrado = true;
-                e2 = transiciones.get(t).getE2();   //obtenemos el estado de destino
+                e2 = transiciones.get(t).getE2(); // Obtenemos el estado de destino
             } else {
                 t++;
             }
         }
-        //No encontramos ninguna transicion con ese estado de origen y esa etiqueta
-        /*
-        if(!encontrado){
-            e2 = -1;
-        }
-         */
+
         return e2;
     }
 
-    /**
-     * Devuelve true si el estado pasado por parametro esta entre los estados
-     * finales
-     *
-     * @param estado
-     * @return
-     */
     @Override
-    public boolean esFinal(int estado) {
+    public boolean esFinal(String estado) {
         return estadosFinales.contains(estado);
     }
 
-    /**
-     * True si la cadena pertenece al lenguaje descrito en el AFD
-     *
-     * @param cadena
-     * @return
-     */
     @Override
     public boolean reconocer(String cadena) {
-        String[] simbolo = cadena.split(",");
-        int estado = 0; //El estado inicial es el 0
+        String[] simbolos = cadena.split(",");
+        String estado = inicial;
 
-        for (String simbolo1 : simbolo) {
-            estado = transicion(estado, simbolo1);
+        for (String simbolo : simbolos) {
+            estado = transicion(estado, simbolo);
         }
-        return esFinal(estado);
 
+        return esFinal(estado);
     }
 
-    public void setInicial(int inicial) {
+    public void setInicial(String inicial) {
         this.inicial = inicial;
     }
 
-    public void añadirEstado(int e1) {
-        if (!estados.contains(e1)) {
-            estados.add(e1);
+    public void añadirEstado(String estado) {
+        if (!estados.contains(estado)) {
+            estados.add(estado);
         }
     }
 
-    public void añadirFinal(int e) {     //Puede que tengamos que cambiarlo a boolean
+    public void añadirFinal(String e) {
         if (!estadosFinales.contains(e)) {
             if (estados.contains(e)) {
                 estadosFinales.add(e);
-                //System.out.println("Se ha añadido como final con exito");
             } else {
                 System.out.println("El estado introducido no pertenece a la lista de estados");
             }
@@ -122,45 +105,74 @@ public class AFD implements Proceso {
         BufferedReader br = new BufferedReader(r);
         String cadena;
         AFD automataAFD = new AFD();
-        TransicionAFD transicion;
-  
-        System.out.println("Añade los estados");                //ESTADOS
+        //TransicionAFD transicion;
+
+        System.out.println("Indica los estados");       //ESTADOS
         cadena = br.readLine();
         String[] estadosArray = cadena.split("\\s+");
 
         for (String estado : estadosArray) {
             if (!estado.isEmpty()) {
-                try {
-                    int numero = Integer.parseInt(estado);
-                    automataAFD.añadirEstado(numero);
-                } catch (NumberFormatException e) {
-                    System.out.println("Error: " + estado + " no es un número entero válido.");
-                }
+                automataAFD.añadirEstado(estado);
             }
         }
-        System.out.println("Añade el estado inicial");          //ESTADO INICIAL
+        System.out.println("Indica el estado inicial"); //ESTADO INICIAL
         cadena = br.readLine();
-        automataAFD.setInicial(Integer.parseInt(cadena));
+        automataAFD.setInicial(cadena);
 
-        System.out.println("Añade los estados finales");        //ESTADOS FINALES
+        System.out.println("Indica los estados finales"); //ESTADOS FINALES
         cadena = br.readLine();
         String[] estadosFinalesArray = cadena.split("\\s+");
 
         for (String estado : estadosFinalesArray) {
             if (!estado.isEmpty()) {
-                try {
-                    int numero = Integer.parseInt(estado);
-                    automataAFD.añadirFinal(numero);
-                } catch (NumberFormatException e) {
-                    System.out.println("Error: " + estado + " no es un número entero válido.");
-                }
+                automataAFD.añadirFinal(estado);
             }
         }
-        
+        // AÑADIR TRANSICIONES
+        /*
+        System.out.println("Indique las transiciones (Formato: estadoOrigen simbolo estadoDestino)");
+        cadena = br.readLine();
+        System.out.println("Entrada de transiciones: " + cadena); // Agrega esta línea
+        String[] transicionesArray = cadena.trim().split("\\s+");
+
+        for (int i = 0; i < transicionesArray.length; i += 3) {
+            try {
+                String estadoOrigen = transicionesArray[i];
+                System.out.println("**parte[0]" + estadoOrigen);
+                String simbolo = transicionesArray[i + 1];
+                System.out.println("**parte[1]" + simbolo);
+                String estadoDestino = transicionesArray[i + 2];
+                System.out.println("**parte[2]" + estadoDestino);
+                automataAFD.agregarTransicion(estadoOrigen, simbolo, estadoDestino);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.out.println("Error: La transicion no tiene el formato correcto.");
+            }
+        }
+         */
+        // AÑADIR TRANSICIONES
+        System.out.println("Indica la cantidad de transiciones que deseas añadir:");
+        int cantidadTransiciones = Integer.parseInt(br.readLine());
+
+        for (int i = 0; i < cantidadTransiciones; i++) {
+            System.out.println("Indique la transicion " + (i + 1) + " (Formato: estadoOrigen simbolo estadoDestino)");
+            cadena = br.readLine().trim();
+
+            String[] partesTransicion = cadena.split("\\s+");
+            if (partesTransicion.length == 3) {
+                String estadoOrigen = partesTransicion[0];
+                String simbolo = partesTransicion[1];
+                String estadoDestino = partesTransicion[2];
+                automataAFD.agregarTransicion(estadoOrigen, simbolo, estadoDestino);
+            } else {
+                System.out.println("Error: La transicion no tiene el formato correcto.");
+            }
+        }
+
         return automataAFD;
     }
 
-    public int getInicial() {
+    public String getInicial() {
         return inicial;
     }
 
@@ -169,42 +181,20 @@ public class AFD implements Proceso {
         String s = "";
         s += "TIPO: AFD\n";
         s += "ESTADOS: ";
-        for (int i = 0; i < estados.size() - 1; i++) {
+        for (int i = 0; i < estados.size(); i++) {
             s += estados.get(i) + " ";
         }
-        s += "INICIALES: ";
+        s += "\nINICIAL: ";
         s += getInicial() + "\n";
         s += "FINALES: ";
-        for (int i = 0; i < estadosFinales.size() - 1; i++) {
+        for (int i = 0; i < estadosFinales.size(); i++) {
             s += estadosFinales.get(i) + " ";
         }
-        s += "TRANSICIONES: \n";
-        for (int i = 0; i < transiciones.size() - 1; i++) {
-            s += transiciones.get(i) + " ";
+        s += "\nTRANSICIONES: \n";
+        for (int i = 0; i < transiciones.size(); i++) {
+            s += transiciones.get(i) + "\n";
         }
         s += "FIN";
         return s;
     }
-    /*
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append("TIPO: AFD\n");
-        s.append("ESTADOS: ");
-        for (int i = 0; i < estados.size() - 1; i++) {
-            s.append(estados.get(i)).append(" ");
-        }
-        s.append("INICIAL: ").append(getInicial()).append("\n");
-        s.append("FINALES: ");
-        for (int i = 0; i < estadosFinales.size() - 1; i++) {
-            s.append(estadosFinales.get(i)).append(" ");
-        }
-        s.append("TRANSICIONES: \n");
-        for (TransicionAFD transicion : transiciones) {
-            s.append(transicion).append(" ");
-        }
-        s.append("FIN");
-        return s.toString();
-    }
-    */
 }
