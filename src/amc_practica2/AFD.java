@@ -19,24 +19,45 @@ public class AFD implements Proceso {
     private List<String> estados;
     private String inicial = ""; // Estado inicial ahora es un String
 
+    /**
+     *  Constructor. crea un automata AFD
+     */
     public AFD() {
         estadosFinales = new ArrayList<>();
         transiciones = new ArrayList<>();
         estados = new ArrayList<>();
     }
 
+    /**
+     * Devuelve una lista con los estados finales
+     * @return 
+     */
     public List<String> getEstadosFinales() {
         return estadosFinales;
     }
-
+    
+    /**
+     * Devuelve las transiciones del automata
+     * @return 
+     */
     public List<TransicionAFD> getTransiciones() {
         return transiciones;
     }
-
+    
+    /**
+     * Devuelve la lista con los estados del automata
+     * @return 
+     */
     public List<String> getEstados() {
         return estados;
     }
-
+    
+    /**
+     * Agrega una transicion al estado
+     * @param e1
+     * @param simbolo
+     * @param e2 
+     */
     public void agregarTransicion(String e1, String simbolo, String e2) {
         if (estados.contains(e1) && estados.contains(e2)) {
             TransicionAFD e = new TransicionAFD(e1, simbolo, e2);
@@ -47,6 +68,13 @@ public class AFD implements Proceso {
         }
     }
 
+    /**
+     * Dado un estado y un simbolo, devuelve el estado de la transición 
+     * o ERROR en el caso que no exista esa transición
+     * @param estado
+     * @param simbolo
+     * @return
+     */
     public String transicion(String estado, String simbolo) {
         String e2 = "ERROR"; //Estado destino es "ERROR" si no existe la transición
         int t = 0;
@@ -60,10 +88,14 @@ public class AFD implements Proceso {
                 t++;
             }
         }
-
         return e2;
     }
 
+    /**
+     * Devuelve true si la cadena pertenece al AFD.
+     * @param cadena
+     * @return 
+     */
     @Override
     public boolean reconocer(String cadena) {
         String[] simbolos = cadena.split(",");
@@ -99,22 +131,35 @@ public class AFD implements Proceso {
             return false;
         }
     }
-
+    /**
+     * Devuelve true si estado es un estado final,.
+     * @param estado
+     * @return 
+     */
     @Override
     public boolean esFinal(String estado) {
         return estadosFinales.contains(estado);
     }
-
+    /**
+     * Inserta el estado inicial
+     * @param inicial 
+     */
     public void setInicial(String inicial) {
         this.inicial = inicial;
     }
-
+    /**
+     * Añade un estado a la lista de estados
+     * @param estado 
+     */
     public void añadirEstado(String estado) {
         if (!estados.contains(estado)) {
             estados.add(estado);
         }
     }
-
+    /**
+     * Añade un estado final a la lista de estados finales
+     * @param e 
+     */
     public void añadirFinal(String e) {
         if (!estadosFinales.contains(e)) {
             if (estados.contains(e)) {
@@ -126,8 +171,14 @@ public class AFD implements Proceso {
             System.out.println("El estado ya es un estado final");
         }
     }
-
+    
+    /**
+     * 
+     * @return
+     * @throws IOException 
+     */
     public static AFD pedir() throws IOException {
+        
         InputStreamReader r = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(r);
         String cadena;
@@ -156,7 +207,6 @@ public class AFD implements Proceso {
                 automataAFD.añadirFinal(estado);
             }
         }
-
         // AÑADIR TRANSICIONES
         System.out.println("Indica la cantidad de transiciones que deseas añadir:");
         int cantidadTransiciones = Integer.parseInt(br.readLine());
@@ -175,7 +225,6 @@ public class AFD implements Proceso {
                 System.out.println("Error: La transicion no tiene el formato correcto.");
             }
         }
-
         return automataAFD;
     }
 

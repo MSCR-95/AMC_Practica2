@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
 /**
  *
  * @author Maria S
@@ -36,8 +35,7 @@ public class GestionFicheros {
                         if (!estado.isEmpty()) {
                             automataAFD.añadirFinal(estado);
                         }
-                    }
-                    
+                    }  
                 } else if (linea.startsWith("TRANSICIONES:")) {
                     while ((linea = br.readLine()) != null && !linea.equals("FIN")) {
                         String[] partes = linea.split("\\s+");
@@ -48,10 +46,8 @@ public class GestionFicheros {
                             automataAFD.agregarTransicion(estadoOrigen, simbolo, estadoDestino);
                         }
                     }
-                }
-                
+                }      
             }
-            
         } catch (IOException e) {
             e.printStackTrace();
         }
