@@ -254,4 +254,3 @@ public class AFD implements Proceso {
         return s;
     }
 }
-//Intento
