@@ -1,17 +1,19 @@
 package amc_practica2;
 
+import java.util.List;
+
 public class Transicionλ {
 
-    private String e1, e2;
+    private String e1;
+    List<String> e2;
 
     /**
      * Constructor. Crea una transición para un automata AFD
      *
      * @param e1 estado de origen.
-     * @param simbolo etiqueta para identificar la transición.
-     * @param e22 lista de estados de destino.
+     * @param e2 lista de estados de destino.
      */
-    public Transicionλ(String e1, String e2) {
+    public Transicionλ(String e1, List<String> e2) {
         this.e1 = e1;
         this.e2 = e2;
     }
@@ -28,7 +30,7 @@ public class Transicionλ {
      * Devuelve el estado de destino
      * @return
      */
-    public String getE2() {
+    public List<String> getE2() {
         return e2;
     }
 
@@ -44,13 +46,13 @@ public class Transicionλ {
      * Inserta el destino de la transición
      * @param e2
      */
-    public void setE2(String e2) {
+    public void setE2(List<String> e2) {
         this.e2 = e2;
     }
 
     @Override
     public String toString(){
-        String s = e1 + " 'λ' " + e2;
+        String s = e1 + " " + e2;
         return s;
     }
 }

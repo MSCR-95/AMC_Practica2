@@ -1,8 +1,11 @@
 package amc_practica2;
 
+import java.util.List;
+
 public class TransicionAFND {
 
-    private String e1, e2;
+    private String e1;
+    private List<String> e2;
     private String simbolo;
 
     /**
@@ -10,9 +13,9 @@ public class TransicionAFND {
      *
      * @param e1 estado de origen.
      * @param simbolo etiqueta para identificar la transición.
-     * @param e22 lista de estados de destino.
+     * @param e2 lista de estados de destino.
      */
-    public TransicionAFND(String e1, String simbolo, String e2) {
+    public TransicionAFND(String e1, String simbolo, List<String> e2) {
         this.e1 = e1;
         this.simbolo = simbolo;
         this.e2 = e2;
@@ -30,7 +33,7 @@ public class TransicionAFND {
      * Devuelve el estado de destino
      * @return
      */
-    public String getE2() {
+    public List<String> getE2() {
         return e2;
     }
 
@@ -55,7 +58,7 @@ public class TransicionAFND {
      * Inserta el destino de la transición
      * @param e2
      */
-    public void setE2(String e2) {
+    public void setE2(List<String> e2) {
         this.e2 = e2;
     }
 

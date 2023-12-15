@@ -39,6 +39,10 @@ public class AFND {
         return transiciones;
     }
 
+    /**
+     * Devuelve las transicionesλ del automata
+     * @return 
+     */
     public List<Transicionλ> getTransicionesλ() {
         return transicionesλ;
     }
@@ -57,24 +61,51 @@ public class AFND {
      * @param simbolo
      * @param e2 
      */
-    public void agregarTransicion(String e1, String simbolo, String e2) {
-        if (estados.contains(e1) && estados.contains(e2)) {
-            TransicionAFND e = new TransicionAFND(e1, simbolo, e2);
-            transiciones.add(e);
-            //System.out.println("Transicion añadida con exito");
+    public void agregarTransicion(String e1, String simbolo, List<String> e2) {
+        List<String> eT = null;
+        if (estados.contains(e1) && e2.size() > 0) {
+            for (int i = 0; i < e2.size(); i++) {
+                if (estados.contains(e2.get(i))) {
+                    eT.add(e2.get(i));
+                }
+            }
+            if (eT.equals(e2)) {
+                TransicionAFND e = new TransicionAFND(e1, simbolo, e2);
+                transiciones.add(e);
+            } else {
+                System.out.println("Todos los estados de e2 no pertenecen a la lista de estados");
+            }
+
+            // System.out.println("Transicion añadida con exito");
         } else {
             System.out.println("Los estados no pertenecen a la lista de estados");
         }
     }
 
-    public void agregarTransicionλ(String e1, String e2) {
-        if (estados.contains(e1) && estados.contains(e2)) {
-        Transicionλ e = new Transicionλ(e1, e2);
-        transicionesλ.add(e);
-            //System.out.println("Transicion añadida con exito");
-        } 
-        else {
-        System.out.println("Los estados no pertenecen a la lista de estados");
+    /**
+     * Agrega una transicionλ al estado
+     * @param e1
+     * @param simbolo
+     * @param e2 
+     */
+    public void agregarTransicionλ(String e1, List<String> e2) {
+        List<String> eT = null;
+        if (estados.contains(e1) && e2.size() > 0) {
+            for (int i = 0; i < e2.size(); i++) {
+                if (estados.contains(e2.get(i))) {
+                    eT.add(e2.get(i));
+                }
+            }
+            if (eT.equals(e2)) {
+                Transicionλ e = new Transicionλ(e1, e2);
+                transicionesλ.add(e);
+            } else {
+                System.out.println("Todos los estados de e2 no pertenecen a la lista de estados");
+            }
+
+            // System.out.println("Transicion añadida con exito");
+        } else {
+            System.out.println("Los estados no pertenecen a la lista de estados");
         }
     }
 
@@ -86,7 +117,7 @@ public class AFND {
      * @return
      */
     public String transicion(String estado, String simbolo) {
-        String e2 = "ERROR"; //Estado destino es "ERROR" si no existe la transición
+        List<String> e2 = null; //Estado destino es "ERROR" si no existe la transición
         int t = 0;
         boolean encontrado = false;
 
@@ -102,7 +133,7 @@ public class AFND {
     }
 
     /**
-     * Devuelve true si la cadena pertenece al AFD.
+     * Devuelve true si la cadena pertenece al AFND.
      * @param cadena
      * @return 
      */
@@ -152,7 +183,10 @@ public class AFND {
         return estadosFinales.contains(estado);
     }
 
-    private int[] λ_clausura(int[] macroestado) {
+    private List<String> λ_clausura(List<String> macroestado) {
+        List<String> λs;
+
+
         return macroestado;
     }
 
