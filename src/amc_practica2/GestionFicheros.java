@@ -111,12 +111,15 @@ public class GestionFicheros {
                 } else if (linea.startsWith("TRANSICIONES:")) {
                     while ((linea = br.readLine()) != null && !linea.equals("TRANSICIONES LAMBDA:")) {
                         String[] partes = linea.split("\\s+");
-                        if (partes.length == 3) {
+                        if (partes.length <= 3) {
                             String estadoOrigen = partes[0];
                             String simbolo = partes[1].replaceAll("'", ""); // Elimina comillas simples
-                            String estadoDestino = partes[2];
+                            ArrayList<String> estadoDestino = new ArrayList<>();
+                                for (int i = 2; i < partes.length; i++) {
+                                    estadoDestino.add(partes[i]);
+                                }
                             automataAFND.agregarSimbolo(simbolo);
-                            automataAFND.agregarTransicion(estadoOrigen, simbolo, new ArrayList<>(Collections.singletonList(estadoDestino)));
+                            automataAFND.agregarTransicion(estadoOrigen, simbolo, estadoDestino);
                         }
                     }
                 } else if (linea.startsWith("TRANSICIONES LAMBDA:")) {
@@ -147,8 +150,11 @@ public class GestionFicheros {
             writer.write("INICIAL: " + automataAFND.getInicial());
             writer.newLine();
 
-            writer.write("FINALES: " + String.join(" ", automataAFND.getEstadosFinales()));
-            writer.newLine();
+            writer.write("FINALES: ");
+            for (int i = 0; i < automataAFND.getEstadosFinales().size(); i++) {
+                writer.write(String.join(" ", automataAFND.getEstadosFinales().get(i)));
+                writer.newLine();
+            }
 
             writer.write("TRANSICIONES:");
             writer.newLine();
