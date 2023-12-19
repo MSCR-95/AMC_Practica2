@@ -17,6 +17,7 @@ public class AFD implements Proceso {
     private List<String> estadosFinales;
     private List<TransicionAFD> transiciones;
     private List<String> estados;
+    private List<String> simbolos;  //Añadido para la representacion
     private String inicial = ""; // Estado inicial ahora es un String
 
     /**
@@ -26,8 +27,21 @@ public class AFD implements Proceso {
         estadosFinales = new ArrayList<>();
         transiciones = new ArrayList<>();
         estados = new ArrayList<>();
+        simbolos = new ArrayList<>();
     }
 
+    public List<String> getSimbolos() {
+        return simbolos;
+    }
+
+    public void agregarSimbolo(String simbolo) {
+        if(!simbolos.contains(simbolo)){
+            simbolos.add(simbolo);
+        }
+    }
+
+    
+    
     /**
      * Devuelve una lista con los estados finales
      * @return 
@@ -113,7 +127,7 @@ public class AFD implements Proceso {
                     nuevosEstados.add(nuevoEstado);
                 }
             }
-
+            
             estadosActuales = nuevosEstados;
             System.out.println("Despues de la transicion con '" + simbolo + "': " + String.join("", estadosActuales));
 
@@ -207,7 +221,7 @@ public class AFD implements Proceso {
                 automataAFD.añadirFinal(estado);
             }
         }
-        // AÑADIR TRANSICIONES
+        //AÑADIR TRANSICIONES
         System.out.println("Indica la cantidad de transiciones que deseas añadir:");
         int cantidadTransiciones = Integer.parseInt(br.readLine());
 
@@ -220,6 +234,7 @@ public class AFD implements Proceso {
                 String estadoOrigen = partesTransicion[0];
                 String simbolo = partesTransicion[1];
                 String estadoDestino = partesTransicion[2];
+                automataAFD.agregarSimbolo(simbolo);
                 automataAFD.agregarTransicion(estadoOrigen, simbolo, estadoDestino);
             } else {
                 System.out.println("Error: La transicion no tiene el formato correcto.");
@@ -231,6 +246,39 @@ public class AFD implements Proceso {
     public String getInicial() {
         return inicial;
     }
+    
+    public void imprimirTabla() {
+    // Imprimir encabezado de columnas (símbolos)
+    System.out.print("-\t");
+    for (String simbolo : simbolos) {
+        System.out.print(simbolo + "\t");
+    }
+    System.out.println();
+
+    // Imprimir filas (estados)
+    for (String estado : estados) {
+        // Marcar estado inicial con '+'
+        if (estado.equals(inicial)) {
+            System.out.print(estado + "+\t");
+        } else {
+            System.out.print(estado + "\t");
+        }
+
+        // Imprimir transiciones
+        for (String simbolo : simbolos) {
+            String destino = transicion(estado, simbolo);
+
+            // Marcar estado final con '*'
+            if (estadosFinales.contains(destino)) {
+                System.out.print(destino + "*\t");
+            } else {
+                System.out.print(destino + "\t");
+            }
+        }
+        System.out.println();
+    }
+}
+
 
     @Override
     public String toString() {
