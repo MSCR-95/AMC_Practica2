@@ -1,5 +1,7 @@
 package Visual;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author Maria S
@@ -22,21 +24,64 @@ public class Inicio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton_AFD = new javax.swing.JButton();
+        jButton_AFND = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jButton_AFD.setText("AFD");
+        jButton_AFD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_AFDActionPerformed(evt);
+            }
+        });
+
+        jButton_AFND.setText("AFND");
+        jButton_AFND.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_AFNDActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(56, 56, 56)
+                .addComponent(jButton_AFD, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE)
+                .addComponent(jButton_AFND, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(77, 77, 77))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(135, 135, 135)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton_AFD)
+                    .addComponent(jButton_AFND))
+                .addContainerGap(141, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton_AFDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AFDActionPerformed
+        VentanaAFD frame = new VentanaAFD();
+        frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
+        frame.setTitle("Parte AFD");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }//GEN-LAST:event_jButton_AFDActionPerformed
+
+    private void jButton_AFNDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AFNDActionPerformed
+        VentanaAFND frame = new VentanaAFND();
+        frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
+        frame.setTitle("Parte AFND");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }//GEN-LAST:event_jButton_AFNDActionPerformed
 
     /**
      * @param args the command line arguments
@@ -74,5 +119,7 @@ public class Inicio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton_AFD;
+    private javax.swing.JButton jButton_AFND;
     // End of variables declaration//GEN-END:variables
 }

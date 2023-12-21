@@ -10,7 +10,7 @@ public class AFND implements Proceso {
     private List<String> estadosFinales; //indica cuales son los estados Finales
     private List<TransicionAFND> transiciones; //indica la lista de transiciones del AFND
     private List<Transicionλ> transicionesL; ////indica la lista de transiciones λ del AFND
-    private List<String> estados;
+    private List<String> estados;   //Para la visualizacion
     private List<String> simbolos;  //Añadido para la representacion
     private String inicial = ""; // Estado inicial ahora es un String
 
@@ -89,22 +89,6 @@ public class AFND implements Proceso {
         }
     }
 
-    /*
-    public void agregarTransicion(String e1, String simbolo, ArrayList<String> e2) {
-        if (estados.contains(e1) && estados.contains(e2)) {
-            for (int i = 0; i < e2.size(); i++) {
-                if (estados.contains(e2.get(i))) {
-                    TransicionAFND e = new TransicionAFND(e1, simbolo, e2);
-                    transiciones.add(e);
-                    //System.out.println("Transicion añadida con exito");
-                }
-            }
-        } else {
-            System.out.println("Los estados no pertenecen a la lista de estados");
-        }
-    }
-     */
-
     public void agregarL_Transicion(String e1, ArrayList<String> e2) {
         int i = 0;
         boolean encontrado = false;
@@ -126,7 +110,7 @@ public class AFND implements Proceso {
         }
     }
 
-    private ArrayList<String> transicion(String estadoOrigen, String simbolo) {
+    public ArrayList<String> transicion(String estadoOrigen, String simbolo) {
         ArrayList<String> estadosDestino = new ArrayList(); //-1 si no existe la macroTransicion
         boolean encontrado = false;
         int i = 0;
@@ -145,10 +129,35 @@ public class AFND implements Proceso {
             }
         }
         //Si no lo encuentra significa que no existe ninguna transicion con ese
-        //estado de origen por lo que devuelve el destino -1.
+        //estado de origen por lo que devuelve el destino M.
         if (!encontrado) {
             estadosDestino.clear();
             estadosDestino.add("M");
+        }
+        return estadosDestino;
+    }
+    public ArrayList<String> transicionLambda(String estadoOrigen) {
+        ArrayList<String> estadosDestino = new ArrayList(); //-1 si no existe la macroTransicion
+        boolean encontrado = false;
+        int i = 0;
+
+        while (!encontrado && i < transicionesL.size()) {
+            //Si encuentra una transición con eOrigen y símbolo pasados por
+            //parámetro, entonces los estados de destino serán los que devuelva
+            //esa transición.
+            if (transicionesL.get(i).getE1().equals(estadoOrigen)) {
+                encontrado = true;
+                estadosDestino.clear();
+                estadosDestino.addAll(transicionesL.get(i).getE2());
+            } else {
+                i++;
+            }
+        }
+        //Si no lo encuentra significa que no existe ninguna transicion con ese
+        //estado de origen por lo que devuelve el destino M.
+        if (!encontrado) {
+            estadosDestino.clear();
+            estadosDestino.add("#");
         }
         return estadosDestino;
     }
@@ -178,11 +187,19 @@ public class AFND implements Proceso {
     //COMPROBAR
     private boolean esFinal(ArrayList<String> macroEstado) {
         //hace la intersección con los estados finales.
-        macroEstado.retainAll(getEstadosFinales());
+        boolean esFinal = false;
+        for (int i = 0; i < macroEstado.size(); i++) {
+            if (estadosFinales.contains(macroEstado.get(i))) {
+                esFinal = true;
+            }
+
+        }
+        //macroEstado.retainAll(getEstadosFinales());
         //se queda solamente con los elementos que tengan en común, por lo que
         //si macroestado no está vacío quiere decir que hay al menos un estado que
         //también se encuentra en los estados finales.
-        return !macroEstado.isEmpty();
+        //return !macroEstado.isEmpty();
+        return esFinal;
     }
 
     /**
@@ -261,70 +278,7 @@ public class AFND implements Proceso {
 
     @Override
     public boolean reconocer(String cadena) {
-        String[] simbolos = cadena.split(",");
-        ArrayList<String> estadosActuales = lambdaClausura(inicial, new ArrayList<>());
 
-        System.out.println("Estado inicial: " + String.join("", estadosActuales));
-
-        for (String simbolo : simbolos) {
-            ArrayList<String> nuevosEstados = new ArrayList<>();
-
-            for (String estadoActual : estadosActuales) {
-                ArrayList<String> nuevoEstado = macroTransicion((ArrayList<String>) Collections.singletonList(estadoActual), simbolo);
-                // System.out.println("**nuevo estado:" + String.join("", nuevoEstado)); // Modificado para eliminar espacios en blanco
-                nuevosEstados.addAll(lambdaClausura(String.join("", nuevoEstado), new ArrayList<>()));
-            }
-
-            estadosActuales = nuevosEstados;
-            System.out.println("Después de la transición con '" + simbolo + "': " + String.join("", estadosActuales));
-
-            if (estadosActuales.isEmpty() || estadosActuales.contains("M")) {
-                System.out.println("La cadena no tiene transiciones correctas.");
-                return false;
-            }
-        }
-
-        // Verificamos si termina en algún estado final
-        if (esFinal(estadosActuales)) {
-            System.out.println("La cadena termina en uno de los estados finales: " + String.join("", estadosActuales));
-            return true;
-        } else {
-            System.out.println("La cadena no termina en un estado final.");
-            return false;
-        }
-    }
-
-    @Override
-    public String toString() {
-        String s = "";
-        s += "TIPO: AFND\n";
-        s += "ESTADOS: ";
-        for (int i = 0; i < estados.size(); i++) {
-            s += estados.get(i) + " ";
-        }
-        s += "\nINICIAL: ";
-        s += getInicial() + "\n";
-        s += "FINALES: ";
-        for (int i = 0; i < estadosFinales.size(); i++) {
-            s += estadosFinales.get(i) + " ";
-        }
-        s += "\nTRANSICIONES:\n";
-        for (int i = 0; i < transiciones.size(); i++) {
-            s += transiciones.get(i) + "\n";
-        }
-
-        s += "TRANSICIONES LAMBDA:\n";
-        for (int i = 0; i < transicionesL.size(); i++) {
-            s += transicionesL.get(i) + "\n";
-        }
-
-        s += "FIN";
-        return s;
-    }
-
-    /*
-     @Override
-    public boolean reconocer(String cadena) {
         String[] simbolo = cadena.split(",");
         ArrayList<String> estado = new ArrayList();
         ArrayList<String> estadoaux = new ArrayList();
@@ -349,11 +303,107 @@ public class AFND implements Proceso {
             eliminarRepeticiones(estado);
             System.out.println(estado);
             if (estado.isEmpty()) {
+                System.out.println("La cadena no tiene transiciones correctas.\n Comprueba la sintaxis de la cadena.");
                 //vMensaje.Mensaje("error", "La cadena no tiene transiciones correctas.\n Comprueba la sintaxis de la cadena.");
                 //break;
             }
+
         }
         return esFinal(estado);
     }
+
+    /*
+    public boolean reconocer(String cadena) {
+        String[] simbolos = cadena.split(",");
+        ArrayList<String> estadosActuales = lambdaClausura(inicial, new ArrayList<>());
+
+        System.out.println("Estado inicial: " + String.join(" ", estadosActuales));
+
+        for (String simbolo : simbolos) {
+            ArrayList<String> nuevosEstados = new ArrayList<>();
+
+            for (String estadoActual : estadosActuales) {
+                ArrayList<String> nuevoEstado = macroTransicion(new ArrayList<>(Collections.singletonList(estadoActual)), simbolo);
+                //nuevosEstados.addAll(lambdaClausura(String.join("", nuevoEstado), new ArrayList<>()));
+                nuevoEstado.add(lambdaClausura(estadoActual, nuevosEstados));
+            }
+
+            estadosActuales = nuevosEstados;
+            System.out.println("Después de la transición con '" + simbolo + "': " + String.join(" ", estadosActuales));
+
+            if (estadosActuales.isEmpty() || estadosActuales.contains("M")) {
+                System.out.println("La cadena no tiene transiciones correctas.");
+                return false;
+            }
+        }
+        // Verificamos si termina en algún estado final
+        if (esFinal(estadosActuales)) {
+            System.out.println("La cadena termina en uno de los estados finales: " + String.join(" ", estadosActuales));
+            return true;
+        } else {
+            System.out.println("La cadena no termina en un estado final.");
+            return false;
+        }
+    }
      */
+    public void añadirEstadosVisual(String cadena, AFND automataAFND) {
+        String[] estadosArray = cadena.split("\\s+");
+        for (String estado : estadosArray) {
+            if (!estado.isEmpty()) {
+                automataAFND.añadirEstado(estado);
+            }
+        }
+    }
+
+    public void añadirInicialVisual(String cadena, AFND automataAFND) {
+        automataAFND.setInicial(cadena);
+    }
+
+    public void añadirFinalesVisual(String cadena, AFND automataAFND) {
+        String[] estadosFinalesArray = cadena.split("\\s+");
+
+        for (String estado : estadosFinalesArray) {
+            if (!estado.isEmpty()) {
+                automataAFND.añadirFinal(estado);
+            }
+        }
+    }
+    public List<String> añadirEstadosDestino(String cadena) {
+        String[] estadosFinalesArray = cadena.split("\\s+");
+        ArrayList<String> estadosDestino = new ArrayList();
+        for (String estado : estadosFinalesArray) {
+            if (!estado.isEmpty()) {
+                estadosDestino.add(estado);
+            }
+        }
+        return estadosDestino;
+    }
+    
+    @Override
+    public String toString() {
+        String s = "";
+        s += "TIPO: AFND\n";
+        s += "ESTADOS: ";
+        for (int i = 0; i < estados.size(); i++) {
+            s += estados.get(i) + " ";
+        }
+        s += "\nINICIAL: ";
+        s += getInicial() + "\n";
+        s += "FINALES: ";
+        for (int i = 0; i < estadosFinales.size(); i++) {
+            s += estadosFinales.get(i) + " ";
+        }
+        s += "\nTRANSICIONES:\n";
+        for (int i = 0; i < transiciones.size(); i++) {
+            s += transiciones.get(i) + "\n";
+        }
+
+        s += "TRANSICIONES LAMBDA:\n";
+        for (int i = 0; i < transicionesL.size(); i++) {
+            s += transicionesL.get(i) + "\n";
+        }
+        s += "FIN";
+        return s;
+    }
+
 }

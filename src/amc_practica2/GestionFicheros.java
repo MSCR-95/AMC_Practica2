@@ -111,26 +111,45 @@ public class GestionFicheros {
                 } else if (linea.startsWith("TRANSICIONES:")) {
                     while ((linea = br.readLine()) != null && !linea.equals("TRANSICIONES LAMBDA:")) {
                         String[] partes = linea.split("\\s+");
-                        if (partes.length <= 3) {
+                        if (linea.length() >= 9) {
                             String estadoOrigen = partes[0];
+                            String EO = linea.substring(0, 2);
+                            //System.out.println(EO);
                             String simbolo = partes[1].replaceAll("'", ""); // Elimina comillas simples
-                            ArrayList<String> estadoDestino = new ArrayList<>();
+                            String sim = linea.substring(4, 5);
+                            /*                             ArrayList<String> estadoDestino = new ArrayList<>();
                                 for (int i = 2; i < partes.length; i++) {
                                     estadoDestino.add(partes[i]);
-                                }
-                            automataAFND.agregarSimbolo(simbolo);
-                            automataAFND.agregarTransicion(estadoOrigen, simbolo, estadoDestino);
+                                } */
+                            String ED = linea.substring(7, linea.length());
+                            String[] partesED = ED.split("\\s+");
+                            ArrayList<String> EDD = new ArrayList<>();
+                            for (int i = 0; i < partesED.length; i++) {
+                                EDD.add(partesED[i]);
+                            }
+                            ArrayList<String> estadoDestino = new ArrayList<>();
+                            estadoDestino.add(partes[2]);
+                            /*                             automataAFND.agregarSimbolo(simbolo);
+                            automataAFND.agregarTransicion(estadoOrigen, simbolo, estadoDestino); */
+                            automataAFND.agregarSimbolo(sim);
+                            automataAFND.agregarTransicion(EO, sim, EDD);
+                            //System.out.println(automataAFND);
                         }
                     }
-                } else if (linea.startsWith("TRANSICIONES LAMBDA:")) {
-                    while ((linea = br.readLine()) != null && !linea.equals("FIN")) {
-                        String[] partes = linea.split("\\s+");
+                } else /* if (linea.startsWith("TRANSICIONES LAMBDA:"))  */ {
+                    if (linea.startsWith(automataAFND.getEstados().get(0).substring(0, 1))) {
+                        String[] partes = linea.split("\s+");
                         if (partes.length > 1) {
                             String estadoOrigen = partes[0];
-                            List<String> estadosDestino = Arrays.asList(Arrays.copyOfRange(partes, 1, partes.length));
-                            automataAFND.agregarL_Transicion(estadoOrigen, new ArrayList<>(estadosDestino));
+                            ArrayList<String> EDL = new ArrayList<>();
+                            for (int i = 1; i < partes.length; i++) {
+                                EDL.add(partes[i]);
+                            }
+                            List<String> estadosDestino = Arrays
+                                    .asList(Arrays.copyOfRange(partes, 1, partes.length));
+                            automataAFND.agregarL_Transicion(estadoOrigen, EDL);
                         }
-                    }
+                    } 
                 }
             }
         } catch (IOException e) {
@@ -162,14 +181,12 @@ public class GestionFicheros {
                 writer.write(transicion.toString());
                 writer.newLine();
             }
-
             writer.write("TRANSICIONES LAMBDA:");
             writer.newLine();
             for (Transicionλ transicionLambda : automataAFND.getTransicionesL()) {
                 writer.write(transicionLambda.toString());
                 writer.newLine();
             }
-
             writer.write("FIN");
         }
     }

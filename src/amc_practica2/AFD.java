@@ -16,12 +16,12 @@ public class AFD implements Proceso {
 
     private List<String> estadosFinales;
     private List<TransicionAFD> transiciones;
-    private List<String> estados;
+    private List<String> estados;   //Para la visualizacion
     private List<String> simbolos;  //Añadido para la representacion
     private String inicial = ""; // Estado inicial ahora es un String
 
     /**
-     *  Constructor. crea un automata AFD
+     * Constructor. crea un automata AFD
      */
     public AFD() {
         estadosFinales = new ArrayList<>();
@@ -35,42 +35,44 @@ public class AFD implements Proceso {
     }
 
     public void agregarSimbolo(String simbolo) {
-        if(!simbolos.contains(simbolo)){
+        if (!simbolos.contains(simbolo)) {
             simbolos.add(simbolo);
         }
     }
 
-    
-    
     /**
      * Devuelve una lista con los estados finales
-     * @return 
+     *
+     * @return
      */
     public List<String> getEstadosFinales() {
         return estadosFinales;
     }
-    
+
     /**
      * Devuelve las transiciones del automata
-     * @return 
+     *
+     * @return
      */
     public List<TransicionAFD> getTransiciones() {
         return transiciones;
     }
-    
+
     /**
      * Devuelve la lista con los estados del automata
-     * @return 
+     *
+     * @return
      */
     public List<String> getEstados() {
         return estados;
     }
-    
+
     /**
      * Agrega una transicion al estado
+     *
      * @param e1
      * @param simbolo
-     * @param e2 
+     * @param e2
      */
     public void agregarTransicion(String e1, String simbolo, String e2) {
         if (estados.contains(e1) && estados.contains(e2)) {
@@ -83,8 +85,9 @@ public class AFD implements Proceso {
     }
 
     /**
-     * Dado un estado y un simbolo, devuelve el estado de la transición 
-     * o ERROR en el caso que no exista esa transición
+     * Dado un estado y un simbolo, devuelve el estado de la transición o ERROR
+     * en el caso que no exista esa transición
+     *
      * @param estado
      * @param simbolo
      * @return
@@ -107,14 +110,15 @@ public class AFD implements Proceso {
 
     /**
      * Devuelve true si la cadena pertenece al AFD.
+     *
      * @param cadena
-     * @return 
+     * @return
      */
     @Override
     public boolean reconocer(String cadena) {
         String[] simbolos = cadena.split(",");
         Set<String> estadosActuales = new HashSet<>(Collections.singletonList(inicial.trim()));
-        
+
         System.out.println("Estado inicial: " + estadosActuales);
 
         for (String simbolo : simbolos) {
@@ -127,7 +131,7 @@ public class AFD implements Proceso {
                     nuevosEstados.add(nuevoEstado);
                 }
             }
-            
+
             estadosActuales = nuevosEstados;
             System.out.println("Despues de la transicion con '" + simbolo + "': " + String.join("", estadosActuales));
 
@@ -145,34 +149,42 @@ public class AFD implements Proceso {
             return false;
         }
     }
+
     /**
      * Devuelve true si estado es un estado final,.
+     *
      * @param estado
-     * @return 
+     * @return
      */
     @Override
     public boolean esFinal(String estado) {
         return estadosFinales.contains(estado);
     }
+
     /**
      * Inserta el estado inicial
-     * @param inicial 
+     *
+     * @param inicial
      */
     public void setInicial(String inicial) {
         this.inicial = inicial;
     }
+
     /**
      * Añade un estado a la lista de estados
-     * @param estado 
+     *
+     * @param estado
      */
     public void añadirEstado(String estado) {
         if (!estados.contains(estado)) {
             estados.add(estado);
         }
     }
+
     /**
      * Añade un estado final a la lista de estados finales
-     * @param e 
+     *
+     * @param e
      */
     public void añadirFinal(String e) {
         if (!estadosFinales.contains(e)) {
@@ -185,14 +197,14 @@ public class AFD implements Proceso {
             System.out.println("El estado ya es un estado final");
         }
     }
-    
+
     /**
-     * 
-     * @return
-     * @throws IOException 
+     *
+     * @return @throws IOException
      */
+    //Para pedir desde consola
     public static AFD pedir() throws IOException {
-        
+
         InputStreamReader r = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(r);
         String cadena;
@@ -243,42 +255,74 @@ public class AFD implements Proceso {
         return automataAFD;
     }
 
+    public void añadirEstadosVisual(String cadena, AFD automataAFD) {
+        String[] estadosArray = cadena.split("\\s+");
+        for (String estado : estadosArray) {
+            if (!estado.isEmpty()) {
+                automataAFD.añadirEstado(estado);
+            }
+        }
+    }
+
+    public void añadirInicialVisual(String cadena, AFD automataAFD) {
+        automataAFD.setInicial(cadena);
+    }
+
+    public void añadirFinalesVisual(String cadena, AFD automataAFD) {
+        String[] estadosFinalesArray = cadena.split("\\s+");
+        for (String estado : estadosFinalesArray) {
+            if (!estado.isEmpty()) {
+                automataAFD.añadirFinal(estado);
+            }
+        }
+    }
+
+    public void añadirTransiccionVisual(String cadena, AFD automataAFD) {
+        String[] partesTransicion = cadena.split("\\s+");
+        if (partesTransicion.length == 3) {
+            String estadoOrigen = partesTransicion[0];
+            String simbolo = partesTransicion[1];
+            String estadoDestino = partesTransicion[2];
+            automataAFD.agregarSimbolo(simbolo);
+            automataAFD.agregarTransicion(estadoOrigen, simbolo, estadoDestino);
+        }
+    }
+
     public String getInicial() {
         return inicial;
     }
-    
+
     public void imprimirTabla() {
-    // Imprimir encabezado de columnas (símbolos)
-    System.out.print("-\t");
-    for (String simbolo : simbolos) {
-        System.out.print(simbolo + "\t");
-    }
-    System.out.println();
-
-    // Imprimir filas (estados)
-    for (String estado : estados) {
-        // Marcar estado inicial con '+'
-        if (estado.equals(inicial)) {
-            System.out.print(estado + "+\t");
-        } else {
-            System.out.print(estado + "\t");
-        }
-
-        // Imprimir transiciones
+        // Imprimir encabezado de columnas (símbolos)
+        System.out.print("-\t");
         for (String simbolo : simbolos) {
-            String destino = transicion(estado, simbolo);
-
-            // Marcar estado final con '*'
-            if (estadosFinales.contains(destino)) {
-                System.out.print(destino + "*\t");
-            } else {
-                System.out.print(destino + "\t");
-            }
+            System.out.print(simbolo + "\t");
         }
         System.out.println();
-    }
-}
 
+        // Imprimir filas (estados)
+        for (String estado : estados) {
+            // Marcar estado inicial con '+'
+            if (estado.equals(inicial)) {
+                System.out.print(estado + "+\t");
+            } else {
+                System.out.print(estado + "\t");
+            }
+
+            // Imprimir transiciones
+            for (String simbolo : simbolos) {
+                String destino = transicion(estado, simbolo);
+
+                // Marcar estado final con '*'
+                if (estadosFinales.contains(destino)) {
+                    System.out.print(destino + "*\t");
+                } else {
+                    System.out.print(destino + "\t");
+                }
+            }
+            System.out.println();
+        }
+    }
 
     @Override
     public String toString() {

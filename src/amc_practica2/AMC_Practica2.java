@@ -16,8 +16,33 @@ public class AMC_Practica2 {
     public static void main(String[] args) throws IOException {
         
         GestionFicheros gf = new GestionFicheros();
+
         AFND aut = gf.cargarAutomataAFND("src/amc_practica2/ficherosPruebas/automataAFND1.txt");
+        //gf.guardarAutomataAFND(aut, "prueba");
         System.out.println(aut);
+        //aut.reconocer("0,1");
+        /*
+        if(aut.reconocer("0,1,1,0")){
+            System.out.println("Pertenece al automata\n");
+        }else
+            System.out.println("NO pertenece\n");
+        */
+        /////////
+        
+        System.out.println("cadena: 0,1");
+        if(aut.reconocer("0,1")){
+            System.out.println("Pertenece al automata\n");
+        }else
+            System.out.println("NO pertenece\n");
+        
+        ///////////////
+        /*
+        System.out.println("cadena: 1,0");
+        if(aut.reconocer("1,0")){
+            System.out.println("Pertenece al automata\n");
+        }else
+            System.out.println("NO pertenece\n");
+        */
         /*
         //PARTE DEL AFD
         GestionFicheros gf = new GestionFicheros();

@@ -15,7 +15,7 @@ public class Transicionλ {
      */
     public Transicionλ(String e1, ArrayList<String> e2) {
         this.e1 = e1;
-        e2.addAll(e2);
+        this.e2 = e2;
     }
 
     /**

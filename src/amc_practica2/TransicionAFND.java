@@ -18,7 +18,7 @@ public class TransicionAFND {
     public TransicionAFND(String e1, String simbolo, ArrayList<String> e2) {
         this.e1 = e1;
         this.simbolo = simbolo;
-        e2.addAll(e2);
+        this.e2 = e2;
     }
 
     /**
